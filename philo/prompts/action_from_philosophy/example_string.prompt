@@ -16,8 +16,13 @@ Your output:
 # ...
 
 [
-    {'action': 'lying', 'moral': 'immoral', 'reason': 'A virtuous person should not lie.'},
-    {'action': 'bravery', 'moral': 'moral', 'reason': 'A virtuous person should be brave.'},
+    {'action': 'lying', 'morality': 'immoral', 'reason': 'A virtuous person should not lie.'},
+    {'action': 'being brave', 'morality': 'moral', 'reason': 'A virtuous person should be brave.'},
+    {
+        'action': 'deciding who lives in the tolley car problem',
+        'morality': 'undecided',
+        'reason': 'Aristotilean ethics requires killing the less vituous set of people in the trolley car problem, which is impossible to determine.'
+    },
     ...
     ]
 ```
