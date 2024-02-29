@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Optional
-from philo.utils import get_repo_root
+from philo.utils import get_repo_root, text_to_list_of_dicts
 from philo.chatbots import OpenAIChat
 from philo.prompts import PromptConstructor
 
@@ -55,9 +55,9 @@ class Questioner:
             prompt_version_number=prompt_version_number,
         )
         if prompt in self.history:
-            return self.history[prompt]
+            out = self.history[prompt]
         else:
             out = self.chatbot.send_receive(prompt)
             self.history[prompt] = out
             self.write_history()
-            return out
+        return text_to_list_of_dicts(out)
