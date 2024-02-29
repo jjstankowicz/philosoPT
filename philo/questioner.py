@@ -1,7 +1,8 @@
 import json
 import os
-from philo.utils import get_prompt, get_repo_root
+from philo.utils import get_repo_root
 from philo.chatbots import OpenAIChat
+from philo.prompts import PromptConstructor
 
 
 class Questioner:
@@ -30,9 +31,9 @@ class Questioner:
         with open(self.history_file_path, "w") as f:
             json.dump(self.history, f)
 
-    def get_philosophies(self, version_number: int):
-        prompt = get_prompt("ask_about_philosophies",
-                            version_number=version_number)
+    def get_philosophies(self, prompt_version_number: int):
+        pc = PromptConstructor("philosophies")
+        prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
         if prompt in self.history:
             return self.history[prompt]
         else:
@@ -43,12 +44,14 @@ class Questioner:
 
     def get_actions_from_philosophies(
         self,
-        version_number: int,
+        prompt_version_number: int,
         philosophy_dict: dict,
     ):
-        prompt = get_prompt("ask_about_action_from_philosophy",
-                            version_number=version_number)
-        prompt.replace("{{ USER_INPUT }}", str(philosophy_dict))
+        pc = PromptConstructor("action_from_philosophy")
+        prompt = pc.get_prompt(
+            user_input=str(philosophy_dict),
+            prompt_version_number=prompt_version_number,
+        )
         if prompt in self.history:
             return self.history[prompt]
         else:
