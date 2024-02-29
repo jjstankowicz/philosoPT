@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Optional
 from philo.utils import get_repo_root
 from philo.chatbots import OpenAIChat
 from philo.prompts import PromptConstructor
@@ -7,8 +8,9 @@ from philo.prompts import PromptConstructor
 
 class Questioner:
 
-    def __init__(self, fresh_start: bool = False):
-        self.history_file_path = os.path.join(get_repo_root(), "history.json")
+    def __init__(self, history_filename_suffix: Optional[str] = "", fresh_start: bool = False):
+        history_filename = f"history{history_filename_suffix}.json"
+        self.history_file_path = os.path.join(get_repo_root(), history_filename)
         self.chatbot = OpenAIChat()
         self.fresh_start = fresh_start
         self.read_history()
@@ -44,8 +46,8 @@ class Questioner:
 
     def get_actions_from_philosophies(
         self,
-        prompt_version_number: int,
         philosophy_dict: dict,
+        prompt_version_number: int,
     ):
         pc = PromptConstructor("action_from_philosophy")
         prompt = pc.get_prompt(
