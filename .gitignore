@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Ignore the history file
-history.json
+history*.json
