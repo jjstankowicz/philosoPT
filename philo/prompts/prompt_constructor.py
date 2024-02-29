@@ -28,7 +28,7 @@ class PromptConstructor:
         # Set the prompt parts
         self.set_prompt_parts()
         # Check if user_input is required
-        user_input_required = "user_input" in self.prompt_parts
+        user_input_required = "user_string" in self.prompt_parts
         if user_input is None and user_input_required:
             raise ValueError("user_input is required for this prompt.")
         # Get the base prompt
