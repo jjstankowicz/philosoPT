@@ -10,16 +10,6 @@ def get_repo_root() -> str:
     return out
 
 
-# A method to get the prompt from a file
-def get_prompt(prompt_name: str, version_number: int) -> str:
-    prompts_path = os.path.join(get_repo_root(), "prompts")
-    # Import the file
-    with open(os.path.join(prompts_path, f"{prompt_name}.py"), "r") as f:
-        exec(f.read(), globals())
-    # Return the version
-    return version[version_number]
-
-
 import re
 from ast import literal_eval
 
