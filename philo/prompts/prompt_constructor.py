@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from philo.utils import get_repo_root
 
 
@@ -23,15 +24,22 @@ class PromptConstructor:
                 with open(os.path.join(self.full_prompt_path, file), "r") as f:
                     self.prompt_parts[file.replace(".prompt", "")] = f.read()
 
-    def get_prompt(self, user_input: str, prompt_version_number: int = 0) -> str:
-        # Get the prompt
+    def get_prompt(self, user_input: Optional[str] = None, prompt_version_number: int = 0) -> str:
+        # Set the prompt parts
         self.set_prompt_parts()
+        # Check if user_input is required
+        user_input_required = "user_input" in self.prompt_parts
+        if user_input is None and user_input_required:
+            raise ValueError("user_input is required for this prompt.")
+        # Get the base prompt
         out = self.prompt_parts[f"v{prompt_version_number}"]
+        # Modify the prompt according to the prompt modifiers
         for prompt_modifier in self.prompt_modifiers:
             if prompt_modifier not in self.prompt_parts:
                 continue
             prompt_modifier_flag = f"{{ {prompt_modifier.upper()} }}"
             out = out.replace(prompt_modifier_flag, self.prompt_parts[prompt_modifier])
         # Replace the user input
-        out = out.replace("{{ USER_INPUT }}", user_input)
+        if user_input_required:
+            out = out.replace("{{ USER_INPUT }}", user_input)
         return out
