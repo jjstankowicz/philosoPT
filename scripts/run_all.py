@@ -1,19 +1,42 @@
 from philo.questioner import Questioner
+from collections import Counter
+
+VERBOSE = True
 
 
 def main():
-    q = Questioner(fresh_start=True)
+    q = Questioner()
     philosophies = q.get_philosophies(prompt_version_number=1)
-    collect = []
-    for i, philosophy_dict in enumerate(philosophies):
-        print(f"{i+1}")
-        print(philosophy_dict["name"])
-        print(philosophy_dict["description"])
+    collect_actions_from_phiolosophies = []
+    for philosophy_dict in philosophies:
+        if VERBOSE:
+            print(f'---{philosophy_dict["name"]}---')
+            print(philosophy_dict["description"])
         actions_from_philosophies = q.get_actions_from_philosophies(
-            prompt_version_number=1,
+            prompt_version_number=0,
             philosophy_dict=philosophy_dict,
         )
-        collect.append({"philo": philosophy_dict, "actions": actions_from_philosophies})
+        collect_actions_from_phiolosophies.append(
+            {
+                "philo": philosophy_dict,
+                "actions": actions_from_philosophies,
+            }
+        )
+    collect_all_actions = []
+    for action in collect_actions_from_phiolosophies:
+        if VERBOSE:
+            print(f'---{action["philo"]["name"]}---')
+            print(action["philo"]["description"])
+            print("")
+        for action_dict in action["actions"]:
+            if VERBOSE:
+                print(action_dict["morality"])
+                print(action_dict["action"])
+                print(action_dict["reason"])
+                print("")
+            collect_all_actions.append(action_dict["action"])
+    for a in collect_all_actions:
+        print(a)
 
 
 if __name__ == "__main__":
