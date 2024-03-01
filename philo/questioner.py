@@ -39,10 +39,10 @@ class Questioner:
         prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
         history_key = self.get_key(prompt_name, prompt_version_number)
         if history_key in self.history:
-            out = self.history[history_key]
+            out = self.history[history_key]["response"]
         else:
             out = self.chatbot.send_receive(prompt)
-            self.history[history_key] = {"response": out, "prompt": prompt}
+            self.history[history_key] = {"prompt": prompt, "response": out}
             self.write_history()
         return text_to_list_of_dicts(out)
 
@@ -59,10 +59,10 @@ class Questioner:
         )
         history_key = self.get_key(prompt_name, prompt_version_number, philosophy_dict["name"])
         if history_key in self.history:
-            out = self.history[history_key]
+            out = self.history[history_key]["response"]
         else:
             out = self.chatbot.send_receive(prompt)
-            self.history[history_key] = {"response": out, "prompt": prompt}
+            self.history[history_key] = {"prompt": prompt, "response": out}
             self.write_history()
         return text_to_list_of_dicts(out)
 
