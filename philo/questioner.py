@@ -31,33 +31,40 @@ class Questioner:
 
     def write_history(self):
         with open(self.history_file_path, "w") as f:
-            json.dump(self.history, f)
+            json.dump(self.history, f, indent=2)
 
     def get_philosophies(self, prompt_version_number: int):
-        pc = PromptConstructor("philosophies")
+        prompt_name = "philosophies"
+        pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
-        if prompt in self.history:
-            return self.history[prompt]
+        history_key = self.get_key(prompt_name, prompt_version_number)
+        if history_key in self.history:
+            out = self.history[history_key]
         else:
             out = self.chatbot.send_receive(prompt)
-            self.history[prompt] = out
+            self.history[history_key] = {"response": out, "prompt": prompt}
             self.write_history()
-            return out
+        return text_to_list_of_dicts(out)
 
     def get_actions_from_philosophies(
         self,
         philosophy_dict: dict,
         prompt_version_number: int,
     ):
-        pc = PromptConstructor("action_from_philosophy")
+        prompt_name = "action_from_philosophy"
+        pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(
             user_input=str(philosophy_dict),
             prompt_version_number=prompt_version_number,
         )
-        if prompt in self.history:
-            out = self.history[prompt]
+        history_key = self.get_key(prompt_name, prompt_version_number, philosophy_dict["name"])
+        if history_key in self.history:
+            out = self.history[history_key]
         else:
             out = self.chatbot.send_receive(prompt)
-            self.history[prompt] = out
+            self.history[history_key] = {"response": out, "prompt": prompt}
             self.write_history()
         return text_to_list_of_dicts(out)
+
+    def get_key(self, prompt_name: str, prompt_version_number: int, *args):
+        return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
