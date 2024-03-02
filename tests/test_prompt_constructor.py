@@ -14,6 +14,7 @@ class TestPromptConstructor(unittest.TestCase):
             "action_from_philosophy",
             "determine_clusters",
             "action_cluster",
+            "score_action",
         ]
         return super().__init__()
 
