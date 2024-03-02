@@ -11,10 +11,17 @@ class TestQuestioner(unittest.TestCase):
             "name": "Utilitarianism",
             "description": "A philosophy that emphasizes the greatest good for the greatest number, often associated with Jeremy Bentham and John Stuart Mill.",
         }
-        self.action_clusters = [
+        self.actions = [
             "Donating to a cause you do not believe in.",
             "Donating to any charitable cause.",
             "Killing five people instead of one in the trolley car problem",
+        ]
+        self.multiple_philosophies_and_descriptions = [
+            {
+                "name": "Anarchism",
+                "description": "A political philosophy that advocates self-governed societies with voluntary institutions.",
+            },
+            self.philosophy_and_description,
         ]
         return super().__init__()
 
@@ -54,7 +61,7 @@ class TestQuestioner(unittest.TestCase):
     def test_get_action_clusters(self):
         clusters_to_actions = self.questioner.get_clusters_to_actions(
             prompt_version_number=0,
-            action_list=self.action_clusters,
+            action_list=self.actions,
             pbar=True,
             force_refresh=False,
         )
@@ -92,4 +99,29 @@ class TestQuestioner(unittest.TestCase):
             clusters_to_actions,
             internal_cluster_to_actions,
             "clusters_to_actions != internal_cluster_to_actions",
+        )
+
+    def test_get_action_scores(self):
+        action_scores = self.questioner.get_action_scores(
+            prompt_version_number=0,
+            action_list=self.actions,
+            philosophy_list=self.multiple_philosophies_and_descriptions,
+            verbose=False,
+            pbar=False,
+            force_refresh=False,
+        )
+        # Verify that the action_scores is a list of dictionaries
+        self.assertIsInstance(action_scores, list, "action_scores is not a list")
+        self.assertIsInstance(action_scores[0], dict, "action_scores[0] is not a dictionary")
+        # Verify that the keys of the dictionary in action_scores are "action", "philosophy", "morality", "reason"
+        for key in ["action", "philosophy", "morality", "reason"]:
+            self.assertIn(key, action_scores[0].keys(), f"{key} key not found")
+        # Verify that the length of the output is equal the the length of action list times the length of philosophy list
+        len_action_scores = len(action_scores)
+        len_action_list = len(self.actions)
+        len_philosophy_list = len(self.multiple_philosophies_and_descriptions)
+        self.assertEqual(
+            len_action_scores,
+            len_action_list * len_philosophy_list,
+            "Length of action_scores is not equal to length of action list times length of philosophy list",
         )
