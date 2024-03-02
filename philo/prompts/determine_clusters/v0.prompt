@@ -3,6 +3,8 @@ Determine an overall set of cluster labels that covers all the actions.
 Step 1: go through each action in the list, and assign a potential cluster label to it.
 This should be simple, short phrase describing the action.
 Step 2: Look at that set of potential cluster labels and combine any that make sense to combine.
+If you have to choose between combining two broad, but disparate topics, you should choose not to.
+For example, "ethical dilemmas and misconduct" should instead be two clusters "ethical dilemmas" and "misconduct".
 
 {{ FORMAT_STRING }}
 

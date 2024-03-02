@@ -14,6 +14,8 @@ Input:
 
 Your output:
 ### Scratchpad
+#
+#
 # Step 1. Find potential cluster labels
 # "Lying to protect a loved one." - potential cluster label: "lying"
 # "Murdering baby Hitler."  - potential cluster label: "murder for good"
@@ -22,6 +24,8 @@ Your output:
 # "Killing five people instead of one in the trolley car problem", - potential cluster label: "complicated killing"
 # "Lying to a friend.", - potential cluster label: "lying"
 # "Telling the truth to an enemy." - potential cluster label: "telling the truth"
+#
+#
 # Step 2.
 #
 # Remaning potential cluster labels:
@@ -40,7 +44,6 @@ Your output:
 # clusters = ["lying", "donating", "murdering"]
 #
 # Remaining potential cluster labels: None
-# Writing out the list of cluster labels
 
 ["lying", "donating", "murdering"]
 
