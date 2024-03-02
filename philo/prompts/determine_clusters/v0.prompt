@@ -1,8 +1,8 @@
 You will get a list of actions that are being used to judge philosophical morality.
-First determine an overall set of cluster labels that covers all the actions.
-Then place each action into one of the clusters.
-You cannot omit any actions from the original list.
-You cannot add any new actions to the list.
+Determine an overall set of cluster labels that covers all the actions.
+Step 1: go through each action in the list, and assign a potential cluster label to it.
+This should be simple, short phrase describing the action.
+Step 2: Look at that set of potential cluster labels and combine any that make sense to combine.
 
 {{ FORMAT_STRING }}
 

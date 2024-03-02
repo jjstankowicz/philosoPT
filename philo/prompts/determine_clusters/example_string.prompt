@@ -14,25 +14,34 @@ Input:
 
 Your output:
 ### Scratchpad
-# Step 1. Decide on clusters
-# Three of the actions are about lying or telling the truth and should be grouped together into a "lying" cluster.
-# Two actions are about donating and should be grouped together into a "donating" cluster.
-# Two actions are about "murdering".
-# This accounts for 3+2+2 = 7 actions, which matches the original number of actions.
-# Step 2. Exhaustively place every action into a cluster
-# "Lying to protect a loved one." Place in the "lying" cluster.
-# "Murdering baby Hitler." Place in the "mudering" cluster.
-# "Donating to a cause you do not believe in." Place in the "donating" cluster.
-# "Donating to any charitable cause.". Place in the "donating" cluster.
-# "Killing five people instead of one in the trolley car problem." Place in the "murdering" cluster.
-# "Lying to a friend." Place in the "lying" cluster.
-# "Telling the truth to an enemy." Place in the "lying" cluster.
+# Step 1. Find potential cluster labels
+# "Lying to protect a loved one." - potential cluster label: "lying"
+# "Murdering baby Hitler."  - potential cluster label: "murder for good"
+# "Donating to a cause you do not believe in.", - potential cluster label: "token donating"
+# "Donating to any charitable cause.", - potential cluster label: "true donation"
+# "Killing five people instead of one in the trolley car problem", - potential cluster label: "complicated killing"
+# "Lying to a friend.", - potential cluster label: "lying"
+# "Telling the truth to an enemy." - potential cluster label: "telling the truth"
+# Step 2.
+#
+# Remaning potential cluster labels:
+#   "lying", "murder for good", "token donating", "true donation", "complicated killing", "telling the truth"
+# Potential cluster labels "lying", "telling the truth" become the "lying" cluster
+# clusters = ["lying"]
+#
+# Remaning potential cluster labels:
+#   "murder for good", "token donating", "true donation", "complicated killing"
+# Potential cluster labels "token donating", "true donating" become the "donating" cluster
+# clusters = ["lying", "donating"]
+#
+# Remaning potential cluster labels:
+#   "murder for good", "complicated killing"
+# Potential cluster labels "murder for good", "complicated killing" become the "murdering" cluster
+# clusters = ["lying", "donating", "murdering"]
+#
+# Remaining potential cluster labels: None
+# Writing out the list of cluster labels
 
-
-{
-    "lying": ["Lying to protect a loved one.", "Lying to a friend.", "Telling the truth to an enemy."],
-    "donating": ["Donating to any charitable cause.", "Donating to a cause you do not believe in."]
-    "murdering": ["Killing five people instead of one in the trolley car problem", "Murdering baby Hitler."]
-}
+["lying", "donating", "murdering"]
 
 ===== EXAMPLE ABOVE =====
