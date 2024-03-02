@@ -1,0 +1,7 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+Your response should be a python dictionary.
+The key should be a one-word summary of the cluster.
+The value should be a python list of all the actions in the cluster.
+Order the actions in the list according to whether the 
+action aligns or does not align with the cluster of the title.

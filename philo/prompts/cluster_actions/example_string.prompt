@@ -1,0 +1,31 @@
+===== EXAMPLE BELOW =====
+Input:
+```
+[
+    "Lying to protect a loved one.",
+    "Murdering baby Hitler.",
+    "Donating to a cause you do not believe in.",
+    "Donating to any charitable cause.",
+    "Killing five people instead of one in the trolley car problem",
+    "Lying to a friend.",
+    "Telling the truth to an enemy."
+]
+```
+
+Your output:
+### Scratchpad
+# Three of the actions are about lying or telling the truth and should be grouped together into a "lying" cluster.
+# Of those three, two are about lying, and should go first in the list because they align with the cluster title.
+# The other is about telling the truth and should go last.
+# Two actions are about donating and should be grouped together into a "donating" cluster.
+# "Donating to a chariatable cause" is aligned to the notion of "donation" and so should go first in the list.
+# Two actions are about murdering.
+# It is feasible that "Murdering baby Hitler" is meant to be a "moral" act, so is against the cluster label of "murdering", and so should go last.
+
+{
+    "lying": ["Lying to protect a loved one.", "Lying to a friend.", "Telling the truth to an enemy."],
+    "donating": ["Donating to any charitable cause.", "Donating to a cause you do not believe in."]
+    "murdering": ["Killing five people instead of one in the trolley car problem", "Murdering baby Hitler."]
+}
+
+===== EXAMPLE ABOVE =====
