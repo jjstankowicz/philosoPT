@@ -18,10 +18,18 @@ from ast import literal_eval
 # Convert a string of text to a list of dictionaries
 def parse_structured_output(text: str) -> any:
     out = text
-    # Remove all lines that start with "#"
-    out = "\n".join(
-        [line for line in out.split("\n") if not line.startswith("#") and not line.startswith("`")]
-    )
+    # Remove all lines that start with "#" and "`"
+    # and remove any comments from the end of a line
+    collect = []
+    for line in out.split("\n"):
+        if line.startswith("#") or line.startswith("`"):
+            continue
+        else:
+            parsed_line = line
+            if "#" in parsed_line:
+                parsed_line = line[: line.index("#")]
+            collect.append(parsed_line)
+    out = "\n".join(collect)
     pattern = r"(\w)'(\w)"
     replacement = r"\1APOSTROPHEAPOSTROPHE\2"
     # Remove newlines
