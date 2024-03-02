@@ -1,0 +1,38 @@
+===== EXAMPLE BELOW =====
+Input:
+```
+{
+    "action": "Lying to protect a loved one.",
+    "philosophies": [
+        {'name': 'Aristotelianism', 'description': 'A philosophy that emphasizes the achievement of personal well-being and happiness through living a life in accordance with reason and virtue.'},
+        {'name': 'Platonism', 'description': 'A philosophy that posits the existence of abstract, non-physical Forms or Ideas as the truest reality.'},
+        {'name': 'Marxism', 'description': 'A social, political, and economic philosophy named after Karl Marx, which examines the effect of capitalism on labor, productivity, and economic development and argues for a worker revolution to overturn capitalism in favor of communism.'}
+    ]
+}
+```
+
+Your output:
+### Scratchpad
+# Aristotelianism: it is reaonable to lie to protect a loved one, so this action is moral.
+# Platonism: Lying is never okay, therefore lying even to protect a loved one is immoral.
+# Marxism: This is an economic philoshopy and does not have a morality judgement on lying to a loved one.
+
+[
+    {
+        "philoshophy": "Aristotelianism",
+        "morality": "moral",
+        "reason": "Lying for a good reason can be moral."
+    },
+    {
+        "philoshophy": "Platonism",
+        "morality": "immoral",
+        "reason": "Lying violates Platonic Ideals, and is therefore immoral."
+    },
+    {
+        "philoshophy": "Maxism",
+        "morality": "undecided",
+        "reason": "Marxism does not pass moral judgement on interpersonal relationships."
+    },
+]
+
+===== EXAMPLE ABOVE =====

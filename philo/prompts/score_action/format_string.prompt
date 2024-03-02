@@ -1,0 +1,10 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+In the scratchpad, go through each philoshopy and write out why the action is moral, immoral, or undecided.
+Use the details in your scratchpad to construct your final answer.
+Your final response should be a python list of dictionaries.
+Each element of the list should correspond to one of the original philoshophies.
+The dictionaries should have three keys: "philosophy", "morality", "reason".
+The value for the "philosophy" key should be the name of the philoshopy.
+The value for the "morality" key should be either "moral", "immoral", or "undecided".
+The value of the "reason" key should be a sentence explaining the reasoning for the morality judgement.
