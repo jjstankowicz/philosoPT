@@ -9,7 +9,12 @@ class TestPromptConstructor(unittest.TestCase):
     def setUp(self):
         self.chatbot = OpenAIChat()
         self.prompts = {}
-        self.prompt_titles = ["philosophies", "action_from_philosophy", "determine_clusters"]
+        self.prompt_titles = [
+            "philosophies",
+            "action_from_philosophy",
+            "determine_clusters",
+            "action_cluster",
+        ]
         return super().__init__()
 
     def test_non_existent_prompt(self):
@@ -27,8 +32,8 @@ class TestPromptConstructor(unittest.TestCase):
 
     def test_get_prompt(self):
         # Verify that the prompt is returned correctly
-        for title in self.prompt_titles:
-            pc = PromptConstructor(title)
+        for prompt_name in self.prompt_titles:
+            pc = PromptConstructor(prompt_name=prompt_name)
             test_user_input = "SOME TEST STRING"
             prompt = pc.get_prompt(test_user_input, prompt_version_number=0)
             self.assertIsInstance(prompt, str, "Prompt is not a string.")
