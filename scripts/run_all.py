@@ -38,13 +38,17 @@ def main():
     ### Cluster the actions
     ###
     # print("Clustering actions...")
-    action_clusters = q.get_action_clusters(
+    clusters_to_actions_dict = q.get_clusters_to_actions(
         prompt_version_number=0,
         action_list=collect_all_actions,
         verbose=True,
         pbar=True,
         # force_refresh=True,
     )
+    sorted_actions = []
+    for value_dict in clusters_to_actions_dict.values():
+        for d in value_dict:
+            sorted_actions.append(d["action"])
     import pdb
 
     pdb.set_trace()
