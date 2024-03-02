@@ -52,7 +52,7 @@ class TestQuestioner(unittest.TestCase):
         )
 
     def test_get_action_clusters(self):
-        action_clusters = self.questioner.get_action_clusters(
+        clusters_to_actions = self.questioner.get_clusters_to_actions(
             prompt_version_number=0,
             action_list=self.action_clusters,
             pbar=True,
@@ -64,8 +64,32 @@ class TestQuestioner(unittest.TestCase):
             self.questioner.cluster_labels[0], str, "cluster_labels[0] is not a string"
         )
         # Verify the action_clusters is a list of dictionaries
+        action_clusters = self.questioner.collect_action_clusters
         self.assertIsInstance(action_clusters, list, "action_clusters is not a list")
         self.assertIsInstance(action_clusters[0], dict, "action_clusters[0] is not a dictionary")
         # Verify that the keys of the first dictionary in action_clusters "action", "cluster", "aligned"
         for key in ["action", "cluster", "aligned"]:
             self.assertIn(key, action_clusters[0].keys(), f"{key} key not found")
+        # Verify that the cluster_to_actions is a dictionary
+        internal_cluster_to_actions = self.questioner.cluster_to_actions_dict
+        self.assertIsInstance(
+            internal_cluster_to_actions, dict, "cluster_to_actions is not a dictionary"
+        )
+        first_key = list(internal_cluster_to_actions.keys())[0]
+        # Verify that the first key in cluster_to_actions is a list of dictionaries
+        self.assertIsInstance(
+            internal_cluster_to_actions[first_key],
+            list,
+            "cluster_to_actions[first_key] is not a list",
+        )
+        self.assertIsInstance(
+            internal_cluster_to_actions[first_key][0],
+            dict,
+            "cluster_to_actions[first_key][0] is not a dictionary",
+        )
+        # Confirm that clusters_to_actions == cluster_to_actions
+        self.assertEqual(
+            clusters_to_actions,
+            internal_cluster_to_actions,
+            "clusters_to_actions != internal_cluster_to_actions",
+        )
