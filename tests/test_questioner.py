@@ -51,24 +51,18 @@ class TestQuestioner(unittest.TestCase):
         )
 
     def test_get_action_clusters(self):
-        action_clusters = self.questioner.get_action_clusters(
+        self.questioner.get_action_clusters(
             prompt_version_number=0,
             action_list=self.action_clusters,
         )
-        # Verify that action_clusters is a dictionary of lists of strings
+        # Verify that the cluster_labels is a list of strings
         self.assertIsInstance(
-            action_clusters,
-            dict,
-            "action_clusters is not a dictionary",
-        )
-        first_key = list(action_clusters.keys())[0]
-        self.assertIsInstance(
-            action_clusters[first_key],
+            self.questioner.cluster_labels,
             list,
-            "action_clusters[key] is not a list",
+            "cluster_labels is not a list",
         )
         self.assertIsInstance(
-            action_clusters[first_key][0],
+            self.questioner.cluster_labels[0],
             str,
-            "action_clusters[key][0] is not a list",
+            "cluster_labels[0] is not a string",
         )
