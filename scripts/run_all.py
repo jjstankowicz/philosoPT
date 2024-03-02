@@ -1,7 +1,7 @@
 from philo.questioner import Questioner
 from collections import Counter
 
-VERBOSE = True
+VERBOSE = False
 
 
 def main():
@@ -35,8 +35,22 @@ def main():
                 print(action_dict["reason"])
                 print("")
             collect_all_actions.append(action_dict["action"])
-    for a in collect_all_actions:
-        print(a)
+    if VERBOSE:
+        for a in collect_all_actions:
+            print(a)
+    action_clusters = q.get_action_clusters(
+        prompt_version_number=0,
+        action_list=collect_all_actions,
+        force_refresh=True,
+    )
+    for cluster, actions in action_clusters.items():
+        print(f"---{cluster}---")
+        for action in actions:
+            print(" ", action)
+        print("")
+    import pdb
+
+    pdb.set_trace()
 
 
 if __name__ == "__main__":
