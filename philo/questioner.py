@@ -33,12 +33,12 @@ class Questioner:
         with open(self.history_file_path, "w") as f:
             json.dump(self.history, f, indent=2)
 
-    def get_philosophies(self, prompt_version_number: int):
+    def get_philosophies(self, prompt_version_number: int, force_refresh: bool = False):
         prompt_name = "philosophies"
         pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
         history_key = self.get_key(prompt_name, prompt_version_number)
-        if history_key in self.history:
+        if (history_key in self.history) and (not force_refresh):
             out = self.history[history_key]["response"]
         else:
             out = self.chatbot.send_receive(prompt)
@@ -50,6 +50,7 @@ class Questioner:
         self,
         philosophy_dict: dict,
         prompt_version_number: int,
+        force_refresh: bool = False,
     ):
         prompt_name = "action_from_philosophy"
         pc = PromptConstructor(prompt_name)
@@ -58,7 +59,7 @@ class Questioner:
             prompt_version_number=prompt_version_number,
         )
         history_key = self.get_key(prompt_name, prompt_version_number, philosophy_dict["name"])
-        if history_key in self.history:
+        if (history_key in self.history) and (not force_refresh):
             out = self.history[history_key]["response"]
         else:
             out = self.chatbot.send_receive(prompt)
@@ -70,6 +71,7 @@ class Questioner:
         self,
         prompt_version_number: int,
         action_list: List[str],
+        force_refresh: bool = False,
     ):
         prompt_name = "action_clusters"
         pc = PromptConstructor(prompt_name)
@@ -78,7 +80,7 @@ class Questioner:
             prompt_version_number=prompt_version_number,
         )
         history_key = self.get_key(prompt_name, prompt_version_number)
-        if history_key in self.history:
+        if (history_key in self.history) and (not force_refresh):
             out = self.history[history_key]["response"]
         else:
             out = self.chatbot.send_receive(prompt)
