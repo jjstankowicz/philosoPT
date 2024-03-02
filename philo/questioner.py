@@ -2,7 +2,7 @@ import json
 import os
 from tqdm import tqdm
 from collections import defaultdict
-from typing import Optional, List
+from typing import Optional, List, Dict
 from philo.utils import get_repo_root, parse_structured_output
 from philo.chatbots import OpenAIChat
 from philo.prompts import PromptConstructor
@@ -47,12 +47,24 @@ class Questioner:
         with open(self.history_file_path, "w") as f:
             json.dump(self.history, f, indent=2)
 
+    def send_recieve(self, prompt: str, history_key: str, force_refresh: bool = False):
+        if force_refresh or (history_key not in self.history):
+            out = self.chatbot.send_receive(prompt)
+            self.history[history_key] = {"prompt": prompt, "response": out}
+            self.write_history()
+        else:
+            out = self.history[history_key]["response"]
+        return out
+
+    def get_key(self, prompt_name: str, prompt_version_number: int, *args):
+        return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
+
     def get_philosophies(self, prompt_version_number: int, force_refresh: bool = False):
         prompt_name = "philosophies"
         pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
         history_key = self.get_key(prompt_name, prompt_version_number)
-        out = self.send_recieve(history_key, prompt, force_refresh)
+        out = self.send_recieve(prompt, history_key, force_refresh)
         return parse_structured_output(out)
 
     def get_actions_from_philosophies(
@@ -68,7 +80,7 @@ class Questioner:
             prompt_version_number=prompt_version_number,
         )
         history_key = self.get_key(prompt_name, prompt_version_number, philosophy_dict["name"])
-        out = self.send_recieve(history_key, prompt, force_refresh)
+        out = self.send_recieve(prompt, history_key, force_refresh)
         return parse_structured_output(out)
 
     def get_clusters_to_actions(
@@ -78,7 +90,7 @@ class Questioner:
         force_refresh: bool = False,
         pbar: bool = False,
         verbose: bool = False,
-    ):
+    ) -> Dict[str, List[Dict[str, str]]]:
         prompt_name = "determine_clusters"
         pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(
@@ -88,7 +100,7 @@ class Questioner:
         if verbose:
             self.log_chatbot(prompt, "prompt")
         history_key = self.get_key(prompt_name, prompt_version_number)
-        out = self.send_recieve(history_key, prompt, force_refresh)
+        out = self.send_recieve(prompt, history_key, force_refresh)
         if verbose:
             self.log_chatbot(out, "response")
         self.cluster_labels = parse_structured_output(out)
@@ -107,7 +119,7 @@ class Questioner:
                 prompt_version_number=prompt_version_number,
             )
             history_key = self.get_key(prompt_name, prompt_version_number, action)
-            out = self.send_recieve(history_key, prompt, force_refresh)
+            out = self.send_recieve(prompt, history_key, force_refresh)
             out = parse_structured_output(out)
             out_dict = {"action": action}
             out_dict.update(out)
@@ -138,14 +150,41 @@ class Questioner:
                 collect[cluster] = [to_attach]
         self.cluster_to_actions_dict = collect
 
-    def send_recieve(self, history_key: str, prompt: str, force_refresh: bool = False):
-        if force_refresh or (history_key not in self.history):
-            out = self.chatbot.send_receive(prompt)
-            self.history[history_key] = {"prompt": prompt, "response": out}
-            self.write_history()
-        else:
-            out = self.history[history_key]["response"]
-        return out
-
-    def get_key(self, prompt_name: str, prompt_version_number: int, *args):
-        return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
+    def get_action_scores(
+        self,
+        prompt_version_number: int,
+        action_list: List[str],
+        philosophy_list: List[Dict[str, str]],
+        force_refresh: bool = False,
+        pbar: bool = False,
+        verbose: bool = False,
+    ):
+        prompt_name = "score_action"
+        pc = PromptConstructor(prompt_name)
+        self.collect_action_scores = []
+        iterator = action_list
+        if pbar:
+            iterator = tqdm(action_list)
+        for action in iterator:
+            user_input = "{\n\t'action':'{{ ACTION }}'\n\t'philosophies':{{ PHILOSOPHIES }}\n}"
+            user_input = user_input.replace("{{ ACTION }}", action)
+            pl = str(philosophy_list)
+            pl = pl.replace("[{'", "[\n\t{'")
+            pl = pl.replace("'}, {'", "'},\n\t{'")
+            pl = pl.replace("'}]", "'}\n\t\t]")
+            user_input = user_input.replace("{{ PHILOSOPHIES }}", pl)
+            prompt = pc.get_prompt(
+                user_input=user_input,
+                prompt_version_number=prompt_version_number,
+            )
+            if verbose:
+                self.log_chatbot(prompt, "prompt")
+            history_key = self.get_key(prompt_name, prompt_version_number, action)
+            out = self.send_recieve(prompt, history_key, force_refresh)
+            if verbose:
+                self.log_chatbot(out, "response")
+            for d in parse_structured_output(out):
+                d_out = {"action": action}
+                d_out.update(d)
+                self.collect_action_scores.append(d_out)
+        return self.collect_action_scores
