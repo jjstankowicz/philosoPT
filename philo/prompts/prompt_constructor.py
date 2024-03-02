@@ -37,7 +37,8 @@ class PromptConstructor:
         for prompt_modifier in self.prompt_modifiers:
             if prompt_modifier not in self.prompt_parts:
                 continue
-            prompt_modifier_flag = f"{{ {prompt_modifier.upper()} }}"
+            prompt_modifier_flag = prompt_modifier.upper()
+            prompt_modifier_flag = "{{ " + prompt_modifier_flag + " }}"
             out = out.replace(prompt_modifier_flag, self.prompt_parts[prompt_modifier])
         # Replace the user input
         if user_input_required:
