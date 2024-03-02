@@ -1,6 +1,6 @@
 import unittest
 from philo.chatbots import OpenAIChat
-from philo.utils import text_to_list_of_dicts
+from philo.utils import parse_structured_output
 from philo.prompts import PromptConstructor
 
 
@@ -9,7 +9,7 @@ class TestPromptConstructor(unittest.TestCase):
     def setUp(self):
         self.chatbot = OpenAIChat()
         self.prompts = {}
-        self.prompt_titles = ["philosophies", "action_from_philosophy"]
+        self.prompt_titles = ["philosophies", "action_from_philosophy", "action_clusters"]
         return super().__init__()
 
     def test_non_existent_prompt(self):

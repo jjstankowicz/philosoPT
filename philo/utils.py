@@ -15,7 +15,7 @@ from ast import literal_eval
 
 
 # Convert a string of text to a list of dictionaries
-def text_to_list_of_dicts(text: str) -> List[Dict[str, str]]:
+def parse_structured_output(text: str) -> any:
     out = text
     if "##" in text:
         # Identify the last line that starts with "#"
