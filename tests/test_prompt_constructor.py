@@ -9,7 +9,7 @@ class TestPromptConstructor(unittest.TestCase):
     def setUp(self):
         self.chatbot = OpenAIChat()
         self.prompts = {}
-        self.prompt_titles = ["philosophies", "action_from_philosophy", "action_clusters"]
+        self.prompt_titles = ["philosophies", "action_from_philosophy", "determine_clusters"]
         return super().__init__()
 
     def test_non_existent_prompt(self):
