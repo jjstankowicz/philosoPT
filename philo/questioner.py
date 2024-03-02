@@ -73,7 +73,7 @@ class Questioner:
         action_list: List[str],
         force_refresh: bool = False,
     ):
-        prompt_name = "action_clusters"
+        prompt_name = "determine_clusters"
         pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(
             user_input="\n".join(action_list),
@@ -86,7 +86,7 @@ class Questioner:
             out = self.chatbot.send_receive(prompt)
             self.history[history_key] = {"prompt": prompt, "response": out}
             self.write_history()
-        return parse_structured_output(out)
+        self.cluster_labels = parse_structured_output(out)
 
     def get_key(self, prompt_name: str, prompt_version_number: int, *args):
         return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
