@@ -1,6 +1,7 @@
 import json
 import os
 from tqdm import tqdm
+from collections import defaultdict
 from typing import Optional, List
 from philo.utils import get_repo_root, parse_structured_output
 from philo.chatbots import OpenAIChat
@@ -15,6 +16,18 @@ class Questioner:
         self.chatbot = OpenAIChat()
         self.fresh_start = fresh_start
         self.read_history()
+
+    def log(self, text: str) -> None:
+        print(text)
+
+    def log_chatbot(self, text: str, type: str = "") -> None:
+        if type not in ["", "prompt", "response"]:
+            raise ValueError(f"Invalid type: {type}")
+        self.log(f"===== {type} =====")
+        self.log("=                =")
+        self.log(text)
+        self.log("=                =")
+        self.log(f"=== End {type} ===")
 
     def read_history(self):
         try:
@@ -64,6 +77,7 @@ class Questioner:
         action_list: List[str],
         force_refresh: bool = False,
         pbar: bool = False,
+        verbose: bool = False,
     ):
         prompt_name = "determine_clusters"
         pc = PromptConstructor(prompt_name)
@@ -71,12 +85,16 @@ class Questioner:
             user_input="\n".join(action_list),
             prompt_version_number=prompt_version_number,
         )
+        if verbose:
+            self.log_chatbot(prompt, "prompt")
         history_key = self.get_key(prompt_name, prompt_version_number)
         out = self.send_recieve(history_key, prompt, force_refresh)
+        if verbose:
+            self.log_chatbot(out, "response")
         self.cluster_labels = parse_structured_output(out)
         prompt_name = "action_cluster"
         action_cluster_pc = PromptConstructor(prompt_name)
-        collect_actions = []
+        self.collect_action_clusters = []
         iterator = action_list
         if pbar:
             iterator = tqdm(action_list)
@@ -93,8 +111,31 @@ class Questioner:
             out = parse_structured_output(out)
             out_dict = {"action": action}
             out_dict.update(out)
-            collect_actions.append(out_dict)
-        return collect_actions
+            self.collect_action_clusters.append(out_dict)
+        self.set_cluster_to_actions_dict()
+
+    def set_cluster_to_actions_dict(self) -> None:
+        collect = defaultdict(list)
+        for ac in self.collect_action_clusters:
+            action = ac["action"]
+            cluster = ac["cluster"]
+            reason = ac["reason"]
+            aligned = ac["aligned"]
+            to_attach = {
+                "action": action,
+                "reason": reason,
+                "aligned": aligned,
+            }
+            if cluster in collect:
+                # Put aligned actions at the beginning of the list
+                if aligned:
+                    collect[cluster] = [to_attach] + collect[cluster]
+                # Put unaligned actions at the end of the list
+                else:
+                    collect[cluster].append(to_attach)
+            else:
+                collect[cluster] = [to_attach]
+        self.cluster_to_actions_dict = collect
 
     def send_recieve(self, history_key: str, prompt: str, force_refresh: bool = False):
         if force_refresh or (history_key not in self.history):
