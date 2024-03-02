@@ -9,3 +9,5 @@ is aligned or not aligned with the cluster label.
 
 The "reason" value should be text explaining the reason that the cluster
 is appropriate for the key and why it is aligned or not with the cluster label, stored as a python string.
+
+Do not include any comments in this dictionary output, as that will break the parsing.
