@@ -37,6 +37,7 @@ class TestQuestioner(unittest.TestCase):
         actions_from_philosopy = self.questioner.get_actions_from_philosophies(
             prompt_version_number=0,
             philosophy_dict=self.philosophy_and_description,
+            force_refresh=False,
         )
         # Verify that the actions_from_philosopy is a list of dictionaries
         self.assertIsInstance(
@@ -51,18 +52,20 @@ class TestQuestioner(unittest.TestCase):
         )
 
     def test_get_action_clusters(self):
-        self.questioner.get_action_clusters(
+        action_clusters = self.questioner.get_action_clusters(
             prompt_version_number=0,
             action_list=self.action_clusters,
+            pbar=True,
+            force_refresh=False,
         )
         # Verify that the cluster_labels is a list of strings
+        self.assertIsInstance(self.questioner.cluster_labels, list, "cluster_labels is not a list")
         self.assertIsInstance(
-            self.questioner.cluster_labels,
-            list,
-            "cluster_labels is not a list",
+            self.questioner.cluster_labels[0], str, "cluster_labels[0] is not a string"
         )
-        self.assertIsInstance(
-            self.questioner.cluster_labels[0],
-            str,
-            "cluster_labels[0] is not a string",
-        )
+        # Verify the action_clusters is a list of dictionaries
+        self.assertIsInstance(action_clusters, list, "action_clusters is not a list")
+        self.assertIsInstance(action_clusters[0], dict, "action_clusters[0] is not a dictionary")
+        # Verify that the keys of the first dictionary in action_clusters "action", "cluster", "aligned"
+        for key in ["action", "cluster", "aligned"]:
+            self.assertIn(key, action_clusters[0].keys(), f"{key} key not found")
