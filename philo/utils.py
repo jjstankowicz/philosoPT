@@ -1,4 +1,5 @@
 import os
+import json
 from typing import List, Dict
 
 MessageType = List[Dict[str, str]]
@@ -17,12 +18,10 @@ from ast import literal_eval
 # Convert a string of text to a list of dictionaries
 def parse_structured_output(text: str) -> any:
     out = text
-    if "##" in text:
-        # Identify the last line that starts with "#"
-        last_line = text.split("\n")
-        last_line = [line for line in last_line if line.startswith("#")]
-        last_line = last_line[-1]
-        out = out.split(last_line)[-1]
+    # Remove all lines that start with "#"
+    out = "\n".join(
+        [line for line in out.split("\n") if not line.startswith("#") and not line.startswith("`")]
+    )
     pattern = r"(\w)'(\w)"
     replacement = r"\1APOSTROPHEAPOSTROPHE\2"
     # Remove newlines
@@ -34,3 +33,10 @@ def parse_structured_output(text: str) -> any:
     out = out.replace("```", "")
     out = literal_eval(out)
     return out
+
+
+def load_history(suffix: str = "") -> dict:
+    history_file_path = os.path.join(get_repo_root(), f"history{suffix}.json")
+    with open(history_file_path, "r") as f:
+        history = json.load(f)
+    return history
