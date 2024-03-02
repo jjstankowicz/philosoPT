@@ -113,7 +113,7 @@ class Questioner:
             out_dict.update(out)
             self.collect_action_clusters.append(out_dict)
         self.set_cluster_to_actions_dict()
-        return self.cluster_to_actions_dict
+        return dict(self.cluster_to_actions_dict)
 
     def set_cluster_to_actions_dict(self) -> None:
         collect = defaultdict(list)
