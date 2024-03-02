@@ -71,7 +71,7 @@ class Questioner:
         out = self.send_recieve(history_key, prompt, force_refresh)
         return parse_structured_output(out)
 
-    def get_action_clusters(
+    def get_clusters_to_actions(
         self,
         prompt_version_number: int,
         action_list: List[str],
@@ -113,6 +113,7 @@ class Questioner:
             out_dict.update(out)
             self.collect_action_clusters.append(out_dict)
         self.set_cluster_to_actions_dict()
+        return self.cluster_to_actions_dict
 
     def set_cluster_to_actions_dict(self) -> None:
         collect = defaultdict(list)
