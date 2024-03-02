@@ -11,6 +11,11 @@ class TestQuestioner(unittest.TestCase):
             "name": "Utilitarianism",
             "description": "A philosophy that emphasizes the greatest good for the greatest number, often associated with Jeremy Bentham and John Stuart Mill.",
         }
+        self.action_clusters = [
+            "Donating to a cause you do not believe in.",
+            "Donating to any charitable cause.",
+            "Killing five people instead of one in the trolley car problem",
+        ]
         return super().__init__()
 
     def test_get_philosophies(self):
@@ -33,6 +38,37 @@ class TestQuestioner(unittest.TestCase):
             prompt_version_number=0,
             philosophy_dict=self.philosophy_and_description,
         )
-        import pdb
+        # Verify that the actions_from_philosopy is a list of dictionaries
+        self.assertIsInstance(
+            actions_from_philosopy,
+            list,
+            "actions_from_philosopy is not a list",
+        )
+        self.assertIsInstance(
+            actions_from_philosopy[0],
+            dict,
+            "actions_from_philosopy[0] is not a dictionary",
+        )
 
-        pdb.set_trace()
+    def test_get_action_clusters(self):
+        action_clusters = self.questioner.get_action_clusters(
+            prompt_version_number=0,
+            action_list=self.action_clusters,
+        )
+        # Verify that action_clusters is a dictionary of lists of strings
+        self.assertIsInstance(
+            action_clusters,
+            dict,
+            "action_clusters is not a dictionary",
+        )
+        first_key = list(action_clusters.keys())[0]
+        self.assertIsInstance(
+            action_clusters[first_key],
+            list,
+            "action_clusters[key] is not a list",
+        )
+        self.assertIsInstance(
+            action_clusters[first_key][0],
+            str,
+            "action_clusters[key][0] is not a list",
+        )

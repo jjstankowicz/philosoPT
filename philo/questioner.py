@@ -1,7 +1,7 @@
 import json
 import os
-from typing import Optional
-from philo.utils import get_repo_root, text_to_list_of_dicts
+from typing import Optional, List
+from philo.utils import get_repo_root, parse_structured_output
 from philo.chatbots import OpenAIChat
 from philo.prompts import PromptConstructor
 
@@ -44,7 +44,7 @@ class Questioner:
             out = self.chatbot.send_receive(prompt)
             self.history[history_key] = {"prompt": prompt, "response": out}
             self.write_history()
-        return text_to_list_of_dicts(out)
+        return parse_structured_output(out)
 
     def get_actions_from_philosophies(
         self,
@@ -64,7 +64,27 @@ class Questioner:
             out = self.chatbot.send_receive(prompt)
             self.history[history_key] = {"prompt": prompt, "response": out}
             self.write_history()
-        return text_to_list_of_dicts(out)
+        return parse_structured_output(out)
+
+    def get_action_clusters(
+        self,
+        prompt_version_number: int,
+        action_list: List[str],
+    ):
+        prompt_name = "action_clusters"
+        pc = PromptConstructor(prompt_name)
+        prompt = pc.get_prompt(
+            user_input="\n".join(action_list),
+            prompt_version_number=prompt_version_number,
+        )
+        history_key = self.get_key(prompt_name, prompt_version_number)
+        if history_key in self.history:
+            out = self.history[history_key]["response"]
+        else:
+            out = self.chatbot.send_receive(prompt)
+            self.history[history_key] = {"prompt": prompt, "response": out}
+            self.write_history()
+        return parse_structured_output(out)
 
     def get_key(self, prompt_name: str, prompt_version_number: int, *args):
         return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
