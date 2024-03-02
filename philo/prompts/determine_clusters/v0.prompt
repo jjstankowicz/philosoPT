@@ -1,0 +1,11 @@
+You will get a list of actions that are being used to judge philosophical morality.
+First determine an overall set of cluster labels that covers all the actions.
+Then place each action into one of the clusters.
+You cannot omit any actions from the original list.
+You cannot add any new actions to the list.
+
+{{ FORMAT_STRING }}
+
+{{ EXAMPLE_STRING }}
+
+{{ USER_STRING }}

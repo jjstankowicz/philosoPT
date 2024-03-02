@@ -1,0 +1,10 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+You can use your scratchpad to keep track of the input number and your number of responses.
+As a reminder: you will fail if any original actions are missing from the clusters
+or if you have added new actions into any of the clusters.
+Your final response should be a python dictionary.
+The key should be a one-word summary of the cluster.
+The value should be a python list of all the actions in the cluster.
+Order the actions in the list according to whether the 
+action aligns or does not align with the title of the cluster.

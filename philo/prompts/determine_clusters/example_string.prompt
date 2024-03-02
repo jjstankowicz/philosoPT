@@ -14,13 +14,20 @@ Input:
 
 Your output:
 ### Scratchpad
+# Step 1. Decide on clusters
 # Three of the actions are about lying or telling the truth and should be grouped together into a "lying" cluster.
-# Of those three, two are about lying, and should go first in the list because they align with the cluster title.
-# The other is about telling the truth and should go last.
 # Two actions are about donating and should be grouped together into a "donating" cluster.
-# "Donating to a chariatable cause" is aligned to the notion of "donation" and so should go first in the list.
-# Two actions are about murdering.
-# It is feasible that "Murdering baby Hitler" is meant to be a "moral" act, so is against the cluster label of "murdering", and so should go last.
+# Two actions are about "murdering".
+# This accounts for 3+2+2 = 7 actions, which matches the original number of actions.
+# Step 2. Exhaustively place every action into a cluster
+# "Lying to protect a loved one." Place in the "lying" cluster.
+# "Murdering baby Hitler." Place in the "mudering" cluster.
+# "Donating to a cause you do not believe in." Place in the "donating" cluster.
+# "Donating to any charitable cause.". Place in the "donating" cluster.
+# "Killing five people instead of one in the trolley car problem." Place in the "murdering" cluster.
+# "Lying to a friend." Place in the "lying" cluster.
+# "Telling the truth to an enemy." Place in the "lying" cluster.
+
 
 {
     "lying": ["Lying to protect a loved one.", "Lying to a friend.", "Telling the truth to an enemy."],
