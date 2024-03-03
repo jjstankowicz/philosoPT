@@ -49,9 +49,20 @@ def main():
     for value_dict in clusters_to_actions_dict.values():
         for d in value_dict:
             sorted_actions.append(d["action"])
-    import pdb
-
-    pdb.set_trace()
+    ### Get the scores for each action
+    ###
+    print("Getting scores for each action...")
+    # Change to GPT-3.5-turbo to get faster results
+    # q.set_chatbot(model="gpt-3.5-turbo")
+    action_scores = q.get_action_scores(
+        prompt_version_number=0,
+        action_list=sorted_actions,
+        philosophy_list=philosophies,
+        verbose=True,
+        pbar=True,
+        force_refresh=False,
+    )
+    print(action_scores)
 
 
 if __name__ == "__main__":
