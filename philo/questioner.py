@@ -13,9 +13,12 @@ class Questioner:
     def __init__(self, history_filename_suffix: Optional[str] = "", fresh_start: bool = False):
         history_filename = f"history{history_filename_suffix}.json"
         self.history_file_path = os.path.join(get_repo_root(), history_filename)
-        self.chatbot = OpenAIChat()
+        self.set_chatbot()
         self.fresh_start = fresh_start
         self.read_history()
+
+    def set_chatbot(self, model: str = "gpt-4-1106-preview") -> None:
+        self.chatbot = OpenAIChat(model=model)
 
     def log(self, text: str) -> None:
         print(text)
@@ -47,14 +50,39 @@ class Questioner:
         with open(self.history_file_path, "w") as f:
             json.dump(self.history, f, indent=2)
 
-    def send_recieve(self, prompt: str, history_key: str, force_refresh: bool = False):
-        if force_refresh or (history_key not in self.history):
-            out = self.chatbot.send_receive(prompt)
-            self.history[history_key] = {"prompt": prompt, "response": out}
-            self.write_history()
-        else:
-            out = self.history[history_key]["response"]
-        return out
+    def send_receive(
+        self,
+        prompt: str,
+        history_key: str,
+        force_refresh: bool = False,
+        max_retries: int = 5,
+    ):
+        retries = 0
+        while retries < max_retries:
+            if force_refresh or (history_key not in self.history):
+                try:
+                    out = self.chatbot.send_receive(prompt)
+                    self.history[history_key] = {"prompt": prompt, "response": out}
+                    self.write_history()
+                except Exception as e:
+                    # Handle specific exceptions or log them
+                    retries += 1
+                    continue
+
+            else:
+                out = self.history[history_key]["response"]
+
+            try:
+                parse_structured_output(out)
+                return out
+            except Exception as e:
+                # Log the parsing failure or handle it specifically
+                retries += 1
+                # Remove the history key to force a refresh
+                self.history.pop(history_key, None)
+
+        # After max_retries, either raise an exception or handle the failure case
+        raise Exception(f"Failed to parse structured output after {max_retries} attempts.")
 
     def get_key(self, prompt_name: str, prompt_version_number: int, *args):
         return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
@@ -64,7 +92,7 @@ class Questioner:
         pc = PromptConstructor(prompt_name)
         prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
         history_key = self.get_key(prompt_name, prompt_version_number)
-        out = self.send_recieve(prompt, history_key, force_refresh)
+        out = self.send_receive(prompt, history_key, force_refresh)
         return parse_structured_output(out)
 
     def get_actions_from_philosophies(
@@ -80,7 +108,7 @@ class Questioner:
             prompt_version_number=prompt_version_number,
         )
         history_key = self.get_key(prompt_name, prompt_version_number, philosophy_dict["name"])
-        out = self.send_recieve(prompt, history_key, force_refresh)
+        out = self.send_receive(prompt, history_key, force_refresh)
         return parse_structured_output(out)
 
     def get_clusters_to_actions(
@@ -100,7 +128,7 @@ class Questioner:
         if verbose:
             self.log_chatbot(prompt, "prompt")
         history_key = self.get_key(prompt_name, prompt_version_number)
-        out = self.send_recieve(prompt, history_key, force_refresh)
+        out = self.send_receive(prompt, history_key, force_refresh)
         if verbose:
             self.log_chatbot(out, "response")
         self.cluster_labels = parse_structured_output(out)
@@ -119,7 +147,7 @@ class Questioner:
                 prompt_version_number=prompt_version_number,
             )
             history_key = self.get_key(prompt_name, prompt_version_number, action)
-            out = self.send_recieve(prompt, history_key, force_refresh)
+            out = self.send_receive(prompt, history_key, force_refresh)
             out = parse_structured_output(out)
             out_dict = {"action": action}
             out_dict.update(out)
@@ -180,7 +208,7 @@ class Questioner:
             if verbose:
                 self.log_chatbot(prompt, "prompt")
             history_key = self.get_key(prompt_name, prompt_version_number, action)
-            out = self.send_recieve(prompt, history_key, force_refresh)
+            out = self.send_receive(prompt, history_key, force_refresh)
             if verbose:
                 self.log_chatbot(out, "response")
             for d in parse_structured_output(out):
