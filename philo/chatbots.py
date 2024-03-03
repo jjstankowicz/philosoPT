@@ -24,12 +24,16 @@ class OpenAIChat:
     def add_message(self, role: str, content: str) -> None:
         self.messages.append({"role": role, "content": content})
 
-    def get_response(self) -> str:
+    def get_response(self, temperature: float = 0.0) -> str:
         # For every message in the chat history, keep only the role and content
         messages = [
             {"role": message["role"], "content": message["content"]} for message in self.messages
         ]
-        response = self.client.chat.completions.create(model=self.model, messages=messages)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+        )
         return response
 
     def stream_response(self) -> Generator[str, None, None]:
@@ -50,10 +54,10 @@ class OpenAIChat:
     def get_messages(self) -> MessageType:
         return self.messages
 
-    def send_receive(self, user_question: str) -> str:
+    def send_receive(self, user_question: str, temperature: float = 0.0) -> str:
         self.current_question = user_question
         self.add_message("user", user_question)
-        response = self.get_response()
+        response = self.get_response(temperature=temperature)
         response = response.choices[0].message.content
         self.add_message("assistant", response)
         self.current_answer = response
