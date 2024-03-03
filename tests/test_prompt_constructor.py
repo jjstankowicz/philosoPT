@@ -34,9 +34,9 @@ class TestPromptConstructor(unittest.TestCase):
     def test_get_prompt(self):
         # Verify that the prompt is returned correctly
         for prompt_name in self.prompt_titles:
-            pc = PromptConstructor(prompt_name=prompt_name)
+            pc = PromptConstructor(prompt_name=prompt_name, prompt_version_number=0)
             test_user_input = "SOME TEST STRING"
-            prompt = pc.get_prompt(test_user_input, prompt_version_number=0)
+            prompt = pc.get_prompt(test_user_input)
             self.assertIsInstance(prompt, str, "Prompt is not a string.")
             # Only test for user input if it is in the prompt
             if "user_input" in pc.prompt_parts:
