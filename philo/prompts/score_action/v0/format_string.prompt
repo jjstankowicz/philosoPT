@@ -1,0 +1,7 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+In the scratchpad, explain how the description and your internal knowledge of the philoshophy
+might lead to a morality judgement of the action.
+Your final response should be a python dictionary with the keys "morality" and "reason".
+The value for the "morality" key should be either "moral", "immoral", or "undecided".
+The value of the "reason" key should be a sentence explaining the reasoning for the morality judgement.

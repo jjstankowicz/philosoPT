@@ -1,0 +1,24 @@
+===== EXAMPLE BELOW =====
+Input:
+```
+{
+    "action": "Lying to protect a loved one.",
+    "philosophies": {
+        'name': 'Aristotelianism',
+        'description': 'A philosophy that emphasizes the achievement of personal well-being and happiness through living a life in accordance with reason and virtue.'
+        },
+}
+```
+
+Your output:
+### Scratchpad
+# Additional
+# Platonism: Lying is never okay, therefore lying even to protect a loved one is immoral.
+# Marxism: This is an economic philoshopy and does not have a morality judgement on lying to a loved one.
+
+{
+    "morality": "moral",
+    "reason": "Lying for a good reason can be moral."
+}
+
+===== EXAMPLE ABOVE =====
