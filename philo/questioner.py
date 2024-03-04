@@ -182,7 +182,7 @@ class Questioner:
         verbose: bool = False,
     ):
         prompt_name = "score_action"
-        pc = PromptConstructor(prompt_name)
+        pc = PromptConstructor(prompt_name=prompt_name, prompt_version_number=prompt_version_number)
         self.collect_action_scores = []
         iterator = action_list
         if pbar:
@@ -195,14 +195,11 @@ class Questioner:
             pl = pl.replace("'}, {'", "'},\n\t{'")
             pl = pl.replace("'}]", "'}\n\t\t]")
             user_input = user_input.replace("{{ PHILOSOPHIES }}", pl)
-            prompt = pc.get_prompt(
-                user_input=user_input,
-                prompt_version_number=prompt_version_number,
-            )
+            prompt = pc.get_prompt(user_input=user_input)
             if verbose:
                 self.log_chatbot(prompt, "prompt")
-            history_key = self.get_key(prompt_name, prompt_version_number, action)
-            out = self.send_recieve(prompt, history_key, force_refresh)
+            history_key = self.get_key(prompt_name, pc.prompt_version_number, action)
+            out = self.send_receive(prompt, history_key, force_refresh)
             if verbose:
                 self.log_chatbot(out, "response")
             for d in parse_structured_output(out):
