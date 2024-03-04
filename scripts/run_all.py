@@ -13,13 +13,13 @@ def main():
     ### Get all actions from all philosophies ###
     ###
     print("Getting actions from all philosophies...")
-    collect_actions_from_phiolosophies = []
+    collect_actions_from_philosophies = []
     for philosophy_dict in philosophies:
         actions_from_philosophies = q.get_actions_from_philosophies(
             prompt_version_number=0,
             philosophy_dict=philosophy_dict,
         )
-        collect_actions_from_phiolosophies.append(
+        collect_actions_from_philosophies.append(
             {
                 "philo": philosophy_dict,
                 "actions": actions_from_philosophies,
@@ -29,7 +29,7 @@ def main():
     ###
     print("Collecting actions into a list...")
     collect_all_actions = []
-    for action in collect_actions_from_phiolosophies:
+    for action in collect_actions_from_philosophies:
         for action_dict in action["actions"]:
             collect_all_actions.append(action_dict["action"])
     if VERBOSE:
