@@ -1,6 +1,7 @@
 import json
 import os
 from tqdm import tqdm
+import time
 from collections import defaultdict
 from typing import Optional, List, Dict
 from philo.utils import get_repo_root, parse_structured_output
@@ -59,30 +60,42 @@ class Questioner:
     ):
         retries = 0
         while retries < max_retries:
-            if force_refresh or (history_key not in self.history):
-                try:
-                    out = self.chatbot.send_receive(prompt)
+            seed = retries + 1
+            temperature = retries / max_retries
+            try:
+                # Check if we need to (re)send the message
+                if force_refresh or (history_key not in self.history):
+                    self.log("Sending message...")
+                    # Send the message and update history
+                    out = self.chatbot.send_receive(prompt, seed=seed, temperature=temperature)
                     self.history[history_key] = {"prompt": prompt, "response": out}
                     self.write_history()
-                except Exception as e:
-                    # Handle specific exceptions or log them
-                    retries += 1
-                    continue
+                else:
+                    # Retrieve response from history if available and no need to force refresh
+                    out = self.history[history_key]["response"]
 
-            else:
-                out = self.history[history_key]["response"]
-
-            try:
+                # Attempt to parse the structured output
                 parse_structured_output(out)
-                return out
+                return out  # Return successfully parsed output
             except Exception as e:
-                # Log the parsing failure or handle it specifically
+                # Handle exceptions (both from sending/receiving and parsing)
+                self.log("An error occurred; attempting retry.")
+                self.log(f"T={temperature}, seed={seed}")
                 retries += 1
-                # Remove the history key to force a refresh
-                self.history.pop(history_key, None)
+                if history_key in self.history:
+                    time.sleep(5)  # Give the history time to update
+                    del self.history[history_key]  # Remove the history entry to force a refresh
+                    self.write_history()
+                    time.sleep(5)  # Give the history time to update
+                if retries < max_retries:
+                    # Optional: modify force_refresh or adjust logic if needed before retrying
+                    continue
+                else:
+                    # Handling case where max retries are reached
+                    break  # Break from the loop if max retries have been reached
 
-        # After max_retries, either raise an exception or handle the failure case
-        raise Exception(f"Failed to parse structured output after {max_retries} attempts.")
+        # After exhausting max_retries, handle the failure case
+        raise Exception(f"Failed after {max_retries} attempts.")
 
     def get_key(self, prompt_name: str, prompt_version_number: int, *args):
         return f"{prompt_name}||{prompt_version_number}||{'||'.join(args)}"
