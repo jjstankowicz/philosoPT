@@ -53,12 +53,12 @@ def main():
     ###
     print("Getting scores for each action...")
     # Change to GPT-3.5-turbo to get faster results
-    # q.set_chatbot(model="gpt-3.5-turbo")
+    q.set_chatbot(model="gpt-3.5-turbo")
     action_scores = q.get_action_scores(
         prompt_version_number=0,
         action_list=sorted_actions,
         philosophy_list=philosophies,
-        verbose=True,
+        verbose=False,
         pbar=True,
         force_refresh=False,
     )
