@@ -1,6 +1,6 @@
-You will get an action and a philosophy with a brief description.
-Use the brief description and your internal knowledge of philosophy to determine
-if the action is moral, immoral, or undecided for the philoshophy.
+You will get an action and a set of philophies with brief description.
+Use the brief description and your internal knowledge of the philosophies to determine
+if the action is moral, immoral, or undecided for each philoshophy.
 
 {{ FORMAT_STRING }}
 

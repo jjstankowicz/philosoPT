@@ -55,7 +55,7 @@ class Questioner:
         prompt: str,
         history_key: str,
         force_refresh: bool = False,
-        max_retries: int = 5,
+        max_retries: int = 15,
     ):
         retries = 0
         while retries < max_retries:
@@ -85,13 +85,13 @@ class Questioner:
         raise Exception(f"Failed to parse structured output after {max_retries} attempts.")
 
     def get_key(self, prompt_name: str, prompt_version_number: int, *args):
-        return f"{prompt_name}||{prompt_version_number}||{'_'.join(args)}"
+        return f"{prompt_name}||{prompt_version_number}||{'||'.join(args)}"
 
     def get_philosophies(self, prompt_version_number: int, force_refresh: bool = False):
         prompt_name = "philosophies"
-        pc = PromptConstructor(prompt_name)
-        prompt = pc.get_prompt(prompt_version_number=prompt_version_number)
-        history_key = self.get_key(prompt_name, prompt_version_number)
+        pc = PromptConstructor(prompt_name=prompt_name, prompt_version_number=prompt_version_number)
+        prompt = pc.get_prompt()
+        history_key = self.get_key(prompt_name, pc.prompt_version_number)
         out = self.send_receive(prompt, history_key, force_refresh)
         return parse_structured_output(out)
 
@@ -102,12 +102,9 @@ class Questioner:
         force_refresh: bool = False,
     ):
         prompt_name = "action_from_philosophy"
-        pc = PromptConstructor(prompt_name)
-        prompt = pc.get_prompt(
-            user_input=str(philosophy_dict),
-            prompt_version_number=prompt_version_number,
-        )
-        history_key = self.get_key(prompt_name, prompt_version_number, philosophy_dict["name"])
+        pc = PromptConstructor(prompt_name=prompt_name, prompt_version_number=prompt_version_number)
+        prompt = pc.get_prompt(user_input=str(philosophy_dict))
+        history_key = self.get_key(prompt_name, pc.prompt_version_number, philosophy_dict["name"])
         out = self.send_receive(prompt, history_key, force_refresh)
         return parse_structured_output(out)
 
@@ -120,20 +117,20 @@ class Questioner:
         verbose: bool = False,
     ) -> Dict[str, List[Dict[str, str]]]:
         prompt_name = "determine_clusters"
-        pc = PromptConstructor(prompt_name)
-        prompt = pc.get_prompt(
-            user_input="\n".join(action_list),
-            prompt_version_number=prompt_version_number,
-        )
+        pc = PromptConstructor(prompt_name=prompt_name, prompt_version_number=prompt_version_number)
+        prompt = pc.get_prompt(user_input="\n".join(action_list))
         if verbose:
             self.log_chatbot(prompt, "prompt")
-        history_key = self.get_key(prompt_name, prompt_version_number)
+        history_key = self.get_key(prompt_name, pc.prompt_version_number)
         out = self.send_receive(prompt, history_key, force_refresh)
         if verbose:
             self.log_chatbot(out, "response")
         self.cluster_labels = parse_structured_output(out)
         prompt_name = "action_cluster"
-        action_cluster_pc = PromptConstructor(prompt_name)
+        action_cluster_pc = PromptConstructor(
+            prompt_name=prompt_name,
+            prompt_version_number=prompt_version_number,
+        )
         self.collect_action_clusters = []
         iterator = action_list
         if pbar:
@@ -142,11 +139,8 @@ class Questioner:
             user_input = "{\n\t'action':{{ ACTION }}\n\t'cluster_labels':{{ CLUSTER_LABELS }}\n}"
             user_input = user_input.replace("{{ ACTION }}", action)
             user_input = user_input.replace("{{ CLUSTER_LABELS }}", str(self.cluster_labels))
-            prompt = action_cluster_pc.get_prompt(
-                user_input=user_input,
-                prompt_version_number=prompt_version_number,
-            )
-            history_key = self.get_key(prompt_name, prompt_version_number, action)
+            prompt = action_cluster_pc.get_prompt(user_input=user_input)
+            history_key = self.get_key(prompt_name, pc.prompt_version_number, action)
             out = self.send_receive(prompt, history_key, force_refresh)
             out = parse_structured_output(out)
             out_dict = {"action": action}
@@ -208,7 +202,7 @@ class Questioner:
             if verbose:
                 self.log_chatbot(prompt, "prompt")
             history_key = self.get_key(prompt_name, prompt_version_number, action)
-            out = self.send_receive(prompt, history_key, force_refresh)
+            out = self.send_recieve(prompt, history_key, force_refresh)
             if verbose:
                 self.log_chatbot(out, "response")
             for d in parse_structured_output(out):
