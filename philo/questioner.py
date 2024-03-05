@@ -7,6 +7,9 @@ from typing import Optional, List, Dict
 from philo.utils import get_repo_root, parse_structured_output
 from philo.chatbots import OpenAIChat
 from philo.prompts import PromptConstructor
+import pandas as pd
+import plotly.graph_objects as go
+import plotly.offline as ol
 
 
 class Questioner:
@@ -100,13 +103,17 @@ class Questioner:
     def get_key(self, prompt_name: str, prompt_version_number: int, *args):
         return f"{prompt_name}||{prompt_version_number}||{'||'.join(args)}"
 
-    def get_philosophies(self, prompt_version_number: int, force_refresh: bool = False):
+    def set_philosophies(self, prompt_version_number: int, force_refresh: bool = False):
         prompt_name = "philosophies"
         pc = PromptConstructor(prompt_name=prompt_name, prompt_version_number=prompt_version_number)
         prompt = pc.get_prompt()
         history_key = self.get_key(prompt_name, pc.prompt_version_number)
         out = self.send_receive(prompt, history_key, force_refresh)
-        return parse_structured_output(out)
+        self.philosophies = parse_structured_output(out)
+
+    def get_philosophies(self, prompt_version_number: int, force_refresh: bool = False):
+        self.set_philosophies(prompt_version_number, force_refresh)
+        return self.philosophies
 
     def get_actions_from_philosophies(
         self,
@@ -183,9 +190,11 @@ class Questioner:
                     collect[cluster].append(to_attach)
             else:
                 collect[cluster] = [to_attach]
+        # Sort by the number of actions in each cluster
+        collect = dict(sorted(collect.items(), key=lambda item: len(item[1]), reverse=True))
         self.cluster_to_actions_dict = collect
 
-    def get_action_scores(
+    def set_action_scores(
         self,
         prompt_version_number: int,
         action_list: List[str],
@@ -219,4 +228,99 @@ class Questioner:
                 d_out = {"action": action}
                 d_out.update(d)
                 self.collect_action_scores.append(d_out)
-        return self.collect_action_scores
+        self.action_scores = self.collect_action_scores
+
+    def create_scorecard(self, action_order: Optional[List[str]] = None) -> None:
+        # Convert the list of dictionaries into a DataFrame
+        df = pd.DataFrame(self.action_scores)
+        if action_order is None:
+            ordered_actions = df["action"].drop_duplicates().to_list()
+        else:
+            ordered_actions = action_order
+
+        # Map morality to numerical values
+        morality_map = {"moral": 1, "undecided": 0, "immoral": -1}
+        df["morality_value"] = df["morality"].map(morality_map)
+        df_pivot = df.pivot_table(
+            values="morality_value",
+            index="philosophy",
+            columns="action",
+            fill_value=-10,
+        )
+
+        df_pivot = df_pivot[ordered_actions]
+
+        cluster_to_int = {k: e + 1 for e, k in enumerate(self.cluster_to_actions_dict.keys())}
+
+        action_to_cluster = {
+            d["action"]: f'{cluster_to_int[d["cluster"]]:2d}' for d in self.collect_action_clusters
+        }
+
+        actions = df_pivot.columns.to_list()
+        actions = [f"{action_to_cluster[a]} | {a}" for a in actions]
+        philosophies = df_pivot.index.to_list()
+
+        # Custom hover data
+        # Assuming df is your original DataFrame
+        hover_data = df.pivot_table(
+            values="reason",
+            index="philosophy",
+            columns="action",
+            aggfunc=lambda x: ", ".join(x),  # Aggregate reasons, if necessary
+        ).fillna("")
+
+        hover_data = hover_data[ordered_actions]
+
+        philosophy_to_description = {row["name"]: row["description"] for row in self.philosophies}
+
+        def hover_str(row, col):
+            out = f"philosophy: {row.name}<br>"
+            philosophy_description = philosophy_to_description[row.name]
+            out += f"philosophy description: {philosophy_description}<br>"
+            out += f"action: {col}<br>"
+            out += f"reason: {row[col]}"
+            return out
+
+        # Format hover_data with philosophy, action, and reason
+        hover_data = hover_data.apply(
+            lambda row: row.index.map(lambda col: hover_str(row=row, col=col)),
+            axis=1,
+        )
+
+        # Create the heatmap
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=df_pivot.values,
+                x=actions,
+                y=philosophies,
+                hoverinfo="text",
+                hovertext=hover_data.values,
+                showscale=False,
+                colorscale="Blues_r",
+            )
+        )
+
+        fig.update_traces(text=hover_data.values, hoverinfo="text")
+
+        cluster_to_int_str = (
+            "<b><span style='text-decoration:underline;'>Cluster Labels</span></b><br>"
+        )
+        cluster_to_int_str += "<br>".join([f"{v:2d} | {k}" for k, v in cluster_to_int.items()])
+
+        # Add annotation with the dictionary text
+        fig.add_annotation(
+            x=1.13,
+            y=-0.60,
+            xref="paper",
+            yref="paper",
+            text=cluster_to_int_str,
+            showarrow=False,
+            font=dict(size=12),
+            align="left",
+        )
+
+        # Update layout for better readability
+        fig.update_layout(title="Action Scores Heatmap", margin_r=275)
+
+        # Show the figure
+        ol.plot(fig, filename="action_scores_heatmap.html", auto_open=False)
