@@ -1,7 +1,4 @@
 from philo.questioner import Questioner
-from collections import Counter
-
-VERBOSE = False
 
 
 def main():
@@ -32,9 +29,6 @@ def main():
     for action in collect_actions_from_philosophies:
         for action_dict in action["actions"]:
             collect_all_actions.append(action_dict["action"])
-    if VERBOSE:
-        for a in collect_all_actions:
-            print(a)
     ### Cluster the actions
     ###
     # print("Clustering actions...")
@@ -54,7 +48,7 @@ def main():
     print("Getting scores for each action...")
     # Change to GPT-3.5-turbo to get faster results
     q.set_chatbot(model="gpt-3.5-turbo")
-    action_scores = q.get_action_scores(
+    q.set_action_scores(
         prompt_version_number=0,
         action_list=sorted_actions,
         philosophy_list=philosophies,
@@ -62,7 +56,7 @@ def main():
         pbar=True,
         force_refresh=False,
     )
-    print(action_scores)
+    q.create_scorecard()
 
 
 if __name__ == "__main__":
