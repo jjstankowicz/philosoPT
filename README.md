@@ -3,6 +3,7 @@
 - [Introduction](#introduction)
 - [Implementation](#implementation)
 - [Results](#results)
+- [ML Analyses](#ml-analyses)
 - [Caveats](#caveats)
 
 # Introduction
@@ -52,6 +53,11 @@ Notes on this result:
 - Though there are exceptions, philosophies tend to align on moral judgement of actions, even when those actions were generated in the context of different philosophies.
 
 ![The philosophy-vs.-action scorecard](images/scorecard.png)
+
+# ML Analyses
+
+Attepts to cluster philosophies:
+- KMeans clustering performed by treating the philosophies as vectors of actions did not produce meaningful clusters, in that there was no elbow in the inertia plot, and the silhouette score was asympotically approaching 0 (so max for 1 cluster). See [here](./results/kmeans_metrics.html).
 
 # Caveats
 
