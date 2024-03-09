@@ -19,11 +19,17 @@ class PromptConstructor:
         self.prompt_modifiers = ["format_string", "example_string", "user_string"]
 
     def check_prompt_name(self):
+        """Check if the prompt name is valid.
+
+        Raises:
+            ValueError: If the prompt name is not valid.
+        """
         # Check if self.prompt_name is a subdirectory of self.repo_root/prompts
         if not os.path.isdir(self.full_prompt_path):
             raise ValueError(f"{self.prompt_name} is not a valid prompt.")
 
-    def set_prompt_parts(self):
+    def set_prompt_parts(self) -> None:
+        """Set the prompt parts."""
         # Set the prompt parts
         self.prompt_parts = {}
         for file in os.listdir(self.full_prompt_path):
@@ -32,6 +38,17 @@ class PromptConstructor:
                     self.prompt_parts[file.replace(".prompt", "")] = f.read()
 
     def get_prompt(self, user_input: Optional[str] = None) -> str:
+        """Get the prompt.
+
+        Args:
+            user_input (Optional[str], optional): The user input. Defaults to None.
+
+        Raises:
+            ValueError: If user_input is required and not provided.
+
+        Returns:
+            str: The prompt.
+        """
         # Set the prompt parts
         self.set_prompt_parts()
         # Check if user_input is required
