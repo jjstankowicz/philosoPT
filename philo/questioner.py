@@ -3,7 +3,7 @@ import os
 from tqdm import tqdm
 import time
 from collections import defaultdict
-from typing import Optional, List, Dict
+from typing import Optional
 from philo.utils import get_repo_root, parse_structured_output
 from philo.chatbots import OpenAIChat
 from philo.prompts import PromptConstructor
