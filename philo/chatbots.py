@@ -1,4 +1,3 @@
-from typing import Generator
 from openai import OpenAI
 from philo.utils import MessageType
 
@@ -19,12 +18,28 @@ class OpenAIChat:
         self.reset_messages()
 
     def reset_messages(self) -> None:
+        """Reset the chat history to the initial state."""
         self.messages = [{"role": "system", "content": self.role_str}]
 
     def add_message(self, role: str, content: str) -> None:
+        """Add a message to the chat history
+
+        Args:
+            role (str): The role of the speaker
+            content (str): The content of the message
+        """
         self.messages.append({"role": role, "content": content})
 
     def get_response(self, temperature: float = 0.0, seed: int = 1) -> str:
+        """Get a response from the chatbot
+
+        Args:
+            temperature (float, optional): The randomness of the response. Higher values are more random. Defaults to 0.0.
+            seed (int, optional): A seed for the randomness. Defaults to 1.
+
+        Returns:
+            str: The response from the chatbot
+        """
         # For every message in the chat history, keep only the role and content
         messages = [
             {"role": message["role"], "content": message["content"]} for message in self.messages
@@ -37,25 +52,33 @@ class OpenAIChat:
         )
         return response
 
-    def stream_response(self) -> Generator[str, None, None]:
-        messages = [
-            {"role": message["role"], "content": message["content"]} for message in self.messages
-        ]
-        for response in self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            stream=True,
-        ):
-            partial_response = response.choices[0].delta.content or ""
-            yield partial_response
-
     def set_messages_from(self, messages: MessageType) -> None:
+        """Set the chat history from a list of messages
+
+        Args:
+            messages (MessageType): The list of messages to use as the chat history
+        """
         self.messages = messages
 
     def get_messages(self) -> MessageType:
+        """Get the chat history
+
+        Returns:
+            MessageType: The chat history
+        """
         return self.messages
 
     def send_receive(self, user_question: str, temperature: float = 0.0, seed: int = 1) -> str:
+        """Send and receive a message from the chatbot
+
+        Args:
+            user_question (str): The message to send to the chatbot.
+            temperature (float, optional): The randomness of the response. Higher values are more random. Defaults to 0.0.
+            seed (int, optional): The seed for the randomness. Defaults to 1.
+
+        Returns:
+            str: _description_
+        """
         self.current_question = user_question
         self.add_message("user", user_question)
         response = self.get_response(temperature=temperature, seed=seed)
