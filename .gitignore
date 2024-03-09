@@ -161,3 +161,6 @@ cython_debug/
 
 # Ignore the history file
 history*.json
+results/cluster_to_actions.json
+results/df_hover_data.parquet
+results/df_pivot.parquet
