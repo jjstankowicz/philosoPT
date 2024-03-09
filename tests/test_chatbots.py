@@ -4,7 +4,7 @@ from philo.chatbots import OpenAIChat
 
 class TestOpenAIChat(unittest.TestCase):
     def setUp(self):
-        self.chatbot = OpenAIChat()
+        self.chatbot = OpenAIChat(model="gpt-3.5-turbo")
         return super().__init__()
 
     def test_send_receive(self):
