@@ -37,6 +37,7 @@ def main():
         force_refresh=False,
     )
     q.create_scorecard()
+    q.save_data()
 
 
 if __name__ == "__main__":
