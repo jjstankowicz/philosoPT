@@ -1,6 +1,6 @@
 import unittest
-from philo.utils import parse_structured_output, load_history, get_repo_root
-
+from philo.utils import parse_structured_output, load_history, get_repo_root, load_results_dfs
+import pandas as pd
 
 class TestUtils(unittest.TestCase):
 
@@ -19,3 +19,8 @@ class TestUtils(unittest.TestCase):
     def test_get_repo_root(self):
         rr = get_repo_root()
         self.assertIsInstance(rr, str, "Repo root is not a string")
+
+    def test_load_results_dfs(self):
+        df_pivot, df_hover = load_results_dfs()
+        self.assertIsInstance(df_pivot, pd.DataFrame, "df_pivot is not a DataFrame")
+        self.assertIsInstance(df_hover, pd.DataFrame, "df_hover is not a DataFrame")
