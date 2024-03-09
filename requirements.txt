@@ -1,3 +1,5 @@
 openai==1.13.3
 plotly==5.19.0
 pandas==2.2.1
+pyarrow==15.0.1
+scikit-learn==1.4.1
