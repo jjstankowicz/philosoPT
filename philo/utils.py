@@ -80,3 +80,15 @@ def load_results_dfs() -> Tuple[pd.DataFrame, pd.DataFrame]:
     df_pivot = pd.read_parquet(os.path.join(results_file_path, "df_pivot.parquet"))
     df_hover_data = pd.read_parquet(os.path.join(results_file_path, "df_hover_data.parquet"))
     return df_pivot, df_hover_data
+
+
+def load_clusters() -> Dict[str, Dict[str, str]]:
+    """Load the clusters from a file
+
+    Returns:
+        Dict[Dict[str,str]]: The clusters
+    """
+    clusters_file_path = os.path.join(get_repo_root(), "results", "cluster_to_actions.json")
+    with open(clusters_file_path, "r") as f:
+        clusters = json.load(f)
+    return clusters
