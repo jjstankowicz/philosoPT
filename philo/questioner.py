@@ -323,4 +323,4 @@ class Questioner:
         fig.update_layout(title="Action Scores Heatmap", margin_r=275)
 
         # Show the figure
-        ol.plot(fig, filename="action_scores_heatmap.html", auto_open=False)
+        ol.plot(fig, filename="results/action_scores_heatmap.html", auto_open=False)
