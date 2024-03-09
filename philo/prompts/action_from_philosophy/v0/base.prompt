@@ -1,0 +1,11 @@
+I will give you a philosophy and a brief description of it. 
+From your knowledge and the brief description, tell me:
+- Two actions that can be described as moral from the philosophy
+- Two actions that can be described as immoral from the philosophy
+- Two actions that are difficult to describe as moral or immoral from the philosophy
+
+{{ FORMAT_STRING }}
+
+{{ EXAMPLE_STRING }}
+
+{{ USER_STRING }}

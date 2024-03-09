@@ -1,0 +1,30 @@
+===== EXAMPLE BELOW =====
+Input:
+```
+{'name': 'Aristotelianism', 'description': 'The philosophical tradition that takes its defining inspiration from the work of Aristotle.'}
+```
+
+Your output:
+```
+### Scratchpad
+# Aristotilean ethics studies vituous aspects of a person's character.
+# A virtuous person should not lie, therefore lying is immoral.
+# A virtuous person should be brave, therefore bravery is moral.
+# A virtuous person should have a hard time deciding if others should live or die
+# without knowing their virtues or vices, and so
+# the person will have a hard time making a decision about
+# who should live or die in the trolley car problem.
+# ...
+
+[
+    {'action': 'lying', 'morality': 'immoral', 'reason': 'A virtuous person should not lie.'},
+    {'action': 'being brave', 'morality': 'moral', 'reason': 'A virtuous person should be brave.'},
+    {
+        'action': 'deciding who lives in the tolley car problem',
+        'morality': 'undecided',
+        'reason': 'Aristotilean ethics requires killing the less vituous set of people in the trolley car problem, which is impossible to determine.'
+    },
+    ...
+    ]
+```
+===== EXAMPLE ABOVE =====

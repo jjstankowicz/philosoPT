@@ -1,0 +1,9 @@
+You will get an action and a set of philophies with brief description.
+Use the brief description and your internal knowledge of the philosophies to determine
+if the action is moral, immoral, or undecided for each philoshophy.
+
+{{ FORMAT_STRING }}
+
+{{ EXAMPLE_STRING }}
+
+{{ USER_STRING }}

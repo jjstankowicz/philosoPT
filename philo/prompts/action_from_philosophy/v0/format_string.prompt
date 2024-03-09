@@ -1,0 +1,7 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+Your response should be a list of dictionaries
+where each dictionary has an "action", a "morality" key, and a "reason" key.
+The "action" is a text description of the action.
+The "morality" is one of the three strings ["moral", "immoral", "undecided"].
+The "reason" key is a single sentence explaining the reasoning.

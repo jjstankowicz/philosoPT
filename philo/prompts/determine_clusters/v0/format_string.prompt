@@ -1,0 +1,6 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+Use the scratchpad to carry out steps one and two and  to record any additional thoughts.
+Your final response should be a python list of strings.
+Each entry in the list should be a cluster label.
+Do not output any text aside from the scratchpad and python list.

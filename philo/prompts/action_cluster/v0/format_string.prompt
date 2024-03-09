@@ -1,0 +1,13 @@
+You should use a "scratchpad" to think about your answer while responding.
+Every line of the scratchpad should start with a hashtag (#).
+Your response should be a python dictionary with the keys "cluster", "reason", and "aligned".
+
+The "cluster" value should be a single python string matching one of the original cluster labels.
+
+The "aligned" key should be a boolean True or False, indicating if the action
+is aligned or not aligned with the cluster label.
+
+The "reason" value should be text explaining the reason that the cluster
+is appropriate for the key and why it is aligned or not with the cluster label, stored as a python string.
+
+Do not include any comments in this dictionary output, as that will break the parsing.

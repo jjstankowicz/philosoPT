@@ -1,0 +1,6 @@
+Return the results as a list of python dictionaries of the form:
+[
+    {'name': philosophy_name, 'description': philosophy_description},
+    ...
+]
+Do not include any other text in the output.

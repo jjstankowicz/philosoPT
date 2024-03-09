@@ -1,0 +1,22 @@
+===== EXAMPLE BELOW =====
+Input:
+```
+{
+    "action": "Lying to protect a loved one."
+    "cluster_labels": ["lying", "donating", "murdering"]
+}
+```
+
+Your output:
+### Scratchpad
+# The action is about lying, so the cluster label is "lying"
+# Typically lying is viewed as bad, but in this case it is to protect a loved one, which may be deemed good.
+# Therefore the action is not aligned with lying.
+
+{
+    "cluster": "lying",
+    "reason": "The action is about lying; however doing so to protect a loved-one
+               can be considered good and so the action is not aligned with the cluster label.",
+    "aligned": False,
+}
+===== EXAMPLE ABOVE =====

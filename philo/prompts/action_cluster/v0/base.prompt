@@ -1,0 +1,8 @@
+You will recieve an action and a list of cluster labels.
+Determine which cluster is most appropriate for the action in a text-clustering task.
+
+{{ FORMAT_STRING }}
+
+{{ EXAMPLE_STRING }}
+
+{{ USER_STRING }}
