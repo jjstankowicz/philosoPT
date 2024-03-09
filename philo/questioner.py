@@ -351,7 +351,14 @@ class Questioner:
         )
 
         # Sort philosophies by number of 1's, then by number of 0's, then by number of -1's
-        philosophy_reindex = df_pivot.sum(axis=1).sort_values(ascending=False).index
+        philosophy_reindex = (
+            df_pivot.apply(
+                lambda r: ((r == 1).sum(), (r == 0).sum(), (r == -1).sum()),
+                axis=1,
+            )
+            .sort_values(ascending=False)
+            .index
+        )
         df_pivot = df_pivot.reindex(philosophy_reindex)
 
         df_pivot = df_pivot[self.sorted_actions]
@@ -432,14 +439,13 @@ class Questioner:
         fig.update_yaxes(autorange="reversed")
 
         # Colors for the legend (assuming these to represent min, mid, and max of 'Blues_r')
-        colors = [
-            "#f7fbff",  # Lightest blue for 'immoral'
-            "#6baed6",  # Medium blue for 'undecided'
-            "#08306b",
-        ]  # Darkest blue for 'moral'
+        from plotly.express import colors
+
+        palette = colors.sequential.Blues
+        colors = [palette[0], palette[len(palette) // 2], palette[-1]]
 
         # Add dummy traces for the legend items
-        legend_labels = ["immoral", "undecided", "moral"]
+        legend_labels = ["moral", "undecided", "immoral"]
         for color, label in zip(colors, legend_labels):
             fig.add_trace(
                 go.Scatter(
