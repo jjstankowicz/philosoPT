@@ -322,5 +322,8 @@ class Questioner:
         # Update layout for better readability
         fig.update_layout(title="Action Scores Heatmap", margin_r=275)
 
-        # Show the figure
+        # Save the figure
+        # If the path doesn't exist, create it
+        if not os.path.exists("results"):
+            os.makedirs("results")
         ol.plot(fig, filename="results/action_scores_heatmap.html", auto_open=False)
