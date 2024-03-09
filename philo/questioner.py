@@ -401,6 +401,9 @@ class Questioner:
             axis=1,
         )
 
+        # Change type
+        hover_data = hover_data.apply(lambda i: i.values)
+
         # Create the heatmap
         fig = go.Figure(
             data=go.Heatmap(
@@ -462,8 +465,24 @@ class Questioner:
         # Adjust layout if necessary
         fig.update_layout(legend_title_text="Category")
 
-        # Save the figure
+        # Save the data
         # If the path doesn't exist, create it
         if not os.path.exists("results"):
             os.makedirs("results")
-        ol.plot(fig, filename="results/action_scores_heatmap.html", auto_open=False)
+
+        self.df_pivot = df_pivot
+        self.df_hover_data = hover_data
+        self.scorecard = fig
+
+    def save_data(self) -> None:
+        """Save the data to the results folder."""
+        # Save the plot
+        ol.plot(self.scorecard, filename="results/action_scores_heatmap.html", auto_open=False)
+
+        # Save the df_pivot and hover_data to the results folder
+        self.df_pivot.to_parquet("results/df_pivot.parquet")
+        self.df_hover_data.to_frame().to_parquet("results/df_hover_data.parquet")
+
+        # Save self.cluster_to_actions as a json in the results folder
+        with open("results/cluster_to_actions.json", "w") as f:
+            json.dump(self.cluster_to_actions, f, indent=2)
